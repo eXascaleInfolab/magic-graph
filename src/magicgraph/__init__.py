@@ -1,9 +1,14 @@
 """Graph utilities."""
 
+from __future__ import print_function, division
+import six  # Python3/2 interoperability
 import logging
 from io import open
 from time import time
-from itertools import izip
+try:
+  from itertools import izip
+except:
+  izip = zip
 from collections import defaultdict, Iterable
 import math
 import random
@@ -29,7 +34,7 @@ class DiGraph(defaultdict):
     return self.keys()
 
   def adjacency_iter(self):
-    return self.iteritems()
+    return six.iteritems(self)
 
   def subgraph(self, nodes={}):
     subgraph = Graph()
@@ -57,7 +62,7 @@ class DiGraph(defaultdict):
 
   def make_consistent(self):
     t0 = time()
-    for k in self.iterkeys():
+    for k in six.iterkeys(self):
       self[k] = list(sorted(set(self[k])))
 
     t1 = time()
@@ -103,8 +108,8 @@ class DiGraph(defaultdict):
 
   def number_of_edges(self):
     """Returns the number of directed edges in the graph"""
-    #return sum([self.degree(x) for x in self.iterkeys()]) / 2.0
-    return sum([self.degree(x) for x in self.iterkeys()])
+    #return sum([self.degree(x) for x in six.iterkeys(self)]) / 2.0
+    return sum([self.degree(x) for x in six.iterkeys(self)])
 
   def number_of_nodes(self):
     """Returns the number of nodes in the graph"""
@@ -254,7 +259,7 @@ class WeightedDiGraph(DiGraph):
 
   def make_consistent(self):
     t0 = time()
-    for k in self.iterkeys():
+    for k in six.iterkeys(self):
       unique_self, unique_indices = np.unique(self[k], return_index=True)
       unique_weights = [self[k].weights[i] for i in unique_indices]
       temp = WeightedNode()
@@ -430,7 +435,7 @@ def load_matfile(file_, variable_name="network", undirected=False, weighted=Fals
 def from_networkx(G_input, undirected=False):
     G = Graph()
     for idx, x in enumerate(G_input.nodes_iter()):
-        for y in G_input[x].iterkeys():
+        for y in six.iterkeys(G_input[x]):
             G[x].append(y)
 
     if undirected:
