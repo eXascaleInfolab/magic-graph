@@ -432,7 +432,7 @@ def load_matfile(file_, variable_name="network", undirected=False, weighted=Fals
     return from_numpy(mat_matrix, undirected, weighted)
 
 
-def load_adjacencylist(args.input, undirected=False, weighted=False):
+def load_adjacencylist(file_, undirected=False, weighted=False):
     raise NotImplemented('The adjacency list loading has not been implemented yet')
 
 
