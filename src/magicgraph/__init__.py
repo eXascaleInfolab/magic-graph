@@ -27,8 +27,9 @@ logger = logging.getLogger("magicgraph")
 
 class DiGraph(defaultdict):
   """Efficient basic implementation of undirected graphs with self loops"""
-  def __init__(self, node_class=list):
+  def __init__(self, node_class=list, totnds=None):
     super(DiGraph, self).__init__(node_class)
+    self.totnds = totnds  # The nominal number of graph nodes, >= actual number of the linked nodes if specified
 
   def nodes(self):
     return self.keys()
@@ -146,6 +147,9 @@ class DiGraph(defaultdict):
 
 
 class Graph(DiGraph):
+  """Unweighted undirected graph"""
+  def __init__(self, totnds=None):
+    super(Graph, self).__init__(totnds=totnds)
 
   def number_of_edges(self):
     """Returns the number of undirected edges in the graph"""
@@ -240,8 +244,8 @@ class WeightedNode(list):
 
 class WeightedDiGraph(DiGraph):
   """A weighted directed graph"""
-  def __init__(self):
-    super(WeightedDiGraph, self).__init__(node_class=WeightedNode)
+  def __init__(self, totnds=None):
+    super(WeightedDiGraph, self).__init__(node_class=WeightedNode, totnds=totnds)
 
   def make_undirected(self):
     t0 = time()
@@ -270,6 +274,8 @@ class WeightedDiGraph(DiGraph):
     logger.info('make_consistent: made consistent in {}s'.format(t1-t0))
 
     self.remove_self_loops()
+    assert self.totnds is None or self.number_of_nodes() <= self.totnds, (
+      'Invalid number of nodes: {} / {}'.formt(self.number_of_nodes(), self.totnds))
 
     return self
 
@@ -449,11 +455,12 @@ def from_networkx(G_input, undirected=False):
 
 
 def from_numpy(x, undirected=False, weighted=False):
+    totnds = max(x.shape)
     if weighted:
         print("G is weighted")
-        G = WeightedDiGraph()
+        G = WeightedDiGraph(totnds)
     else:
-        G = Graph()
+        G = Graph(totnds)
 
     # TODO add handling for dense numpy too
     cx = x.tocoo()
