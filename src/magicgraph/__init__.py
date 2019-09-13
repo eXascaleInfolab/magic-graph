@@ -432,6 +432,10 @@ def load_matfile(file_, variable_name="network", undirected=False, weighted=Fals
     return from_numpy(mat_matrix, undirected, weighted)
 
 
+def load_adjacencylist(args.input, undirected=False, weighted=False):
+    raise NotImplemented('The adjacency list loading has not been implemented yet')
+
+
 def from_networkx(G_input, undirected=False):
     G = Graph()
     for idx, x in enumerate(G_input.nodes_iter()):
